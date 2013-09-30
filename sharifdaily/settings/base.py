@@ -139,11 +139,12 @@ DJANGO_APPS = (
 )
 
 THIRT_PARTY_APPS = (
-
+    "south",
+    "tastypie",
 )
 
 LOCAL_APPS = (
-
+   "sharifdaily.accounts",
 )
 
 INSTALLED_APPS = DJANGO_APPS + THIRT_PARTY_APPS + LOCAL_APPS

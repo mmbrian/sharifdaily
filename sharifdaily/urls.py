@@ -10,6 +10,7 @@ urlpatterns = patterns('',
     # url(r'^sharifdaily/', include('sharifdaily.foo.urls')),
     url(r'^$', TemplateView.as_view(template_name="index.html")),
     url(r'^accounts/', include('sharifdaily.accounts.urls')),
+    url(r'^articles/', include('sharifdaily.newspaper.urls')),
 
     # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),

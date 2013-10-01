@@ -1,4 +1,7 @@
+from django.contrib.auth.models import User
+from django.db.models import Q
 import re
+
 
 MINIMUM_PASS_LENGTH = 6
 REGEX_VALID_PASSWORD = (
@@ -19,3 +22,20 @@ def validate_password(password):
     if re.match(REGEX_VALID_PASSWORD, password):
         return True
     return False
+
+def username_present(username):
+    if User.objects.filter(username=username).count():
+        return True
+    return False
+
+def email_present(email):
+    if User.objects.filter(email=email).count():
+        return True
+    return False
+
+def user_present(username, email):
+    try:
+        User.objects.get(Q(email=email) | Q(username=username))
+        return False
+    except User.DoesNotExist:
+        return True

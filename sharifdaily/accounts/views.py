@@ -1,7 +1,17 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.models import User
+from django.shortcuts import render_to_response
+from django.core.mail import send_mail, BadHeaderError
+
+from random import choice
+from string import digits, ascii_lowercase, ascii_uppercase
+
 from .utils import user_present
+from .models import Profile
+from settings import SERVER_ADDRESS
+
 
 SECRET_KEY = 'sharif0@4-64m+wcv*#l2-ula5qq5gd@-bn-#^8&8&axfz3zrp48!x7=daily'
 # rot13(base64(SECRET_KEY)) > use this for registration
@@ -32,9 +42,36 @@ def register(request):
 				user = User.objects.create_user(username, email, password)
 				user.first_name = request.POST['first_name']
 				user.last_name = request.POST['last_name']
+				user.save()
 
+				confirmation_code = ''.join(choice(ascii_uppercase + digits + ascii_lowercase) for x in range(33))
+				major = request.POST['major']
+				profile, new = Profile.objects.get_or_create(user=user, confirmation_code=confirmation_code, major=major)
+				profile.save()
+				send_confirmation_email(username, email, confirmation_code)
+				
+				return HttpResponse("created")
 			else:
-				return HttpResponse("exists")			
+				return HttpResponse("exists")
 		else:
-			return HttpResponse("invalid")		
+			return HttpResponse("invalid")
 
+def activate(request, username, confirmation_code):
+	try:
+		user = User.objects.get(username=username)
+		profile = user.profile
+		valid_code = profile.confirmation_code == confirmation_code
+		if valid_code:
+			user.is_active = True
+			user.save()
+		return render_to_response('accounts/signup_complete.html', locals())
+	except User.DoesNotExist:
+		return HttpResponse('invalid')
+
+def send_confirmation_email(username, to_email, confirmation_code):
+	massage = '''
+	Greetings!\n\n
+	Visit '%s/accounts/activate/%s/%s' in order to activate your account.\n\n
+	Thanks
+	''' % (SERVER_ADDRESS, username, confirmation_code)
+    send_mail('Your SharifDaily Account', message, 'SharifDaily Newspaper', [to_email])

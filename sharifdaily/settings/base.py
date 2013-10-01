@@ -13,6 +13,8 @@ root = lambda * x: os.path.join(os.path.abspath(PROJECT_ROOT), *x)
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
+SERVER_ADDRESS = 'http://81.31.166.199/'
+
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
     ('mmbrian', 'mohsen.brian@gmail.com'),
@@ -151,6 +153,14 @@ LOCAL_APPS = (
 INSTALLED_APPS = DJANGO_APPS + THIRT_PARTY_APPS + LOCAL_APPS
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'sharif.daily.mobile@gmail.com'
+EMAIL_HOST_PASSWORD = '*Sharif*.*daily*.*Mobile*'
+EMAIL_PORT = 587
+EMAIL_SUBJECT_PREFIX = 'SharifDaily '
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to

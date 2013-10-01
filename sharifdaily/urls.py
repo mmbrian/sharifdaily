@@ -6,8 +6,6 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     # Examples:
-    # url(r'^$', 'sharifdaily.views.home', name='home'),
-    # url(r'^sharifdaily/', include('sharifdaily.foo.urls')),
     url(r'^$', TemplateView.as_view(template_name="index.html")),
     url(r'^accounts/', include('sharifdaily.accounts.urls')),
     url(r'^articles/', include('sharifdaily.newspaper.urls')),

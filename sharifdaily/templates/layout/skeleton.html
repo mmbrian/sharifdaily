@@ -1,0 +1,30 @@
+{% load i18n %}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>{% block title %}{% endblock %}</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        {% block meta_keywords %}
+            <meta name="description" content="SharifDaily Newspaper"/>
+            <meta name="keywords" content="SharifDaily Sharif Newspaper Sharif Daily روزنامه شریف"/>
+        {% endblock %}
+        <meta name="author" content={% trans "mmbrian" %}/>
+        <meta name="copyright" content={% trans "SharifDaily Newspaper" %}/>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+        {% block base_css %}
+        {% endblock %}
+
+        {% block base_js %}
+        {% endblock %}
+    </head>
+
+    <body>
+        <div class="page-container">
+            {% block base_content %}
+            {% endblock %}
+        </div>
+    </body>
+</html>

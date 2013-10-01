@@ -1,0 +1,28 @@
+{% extends 'layout/base.html' %}
+{% load i18n %}
+
+{% block css %}
+{% endblock %}
+
+{% block title %}
+	{% if not valid_code %}
+		{% trans "Invalid Code" %}
+	{% else %}
+		{% trans "Sign Up Completed" %}
+	{% endif %}
+{% endblock %}
+
+{% block content %}
+    <div id="main_content">
+    	{% if not valid_code %}
+			<h3>{% trans "Invalid Confirmation Code" %}</h3>
+		{% else %}
+			<h3>{% trans "Your account is activated!" %}</h3>
+        	<p>{% trans "You may now log in from the application." %}</p>	
+		{% endif %}        
+    </div>
+{% endblock %}
+
+
+
+

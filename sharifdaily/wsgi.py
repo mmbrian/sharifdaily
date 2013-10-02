@@ -12,10 +12,11 @@ that later delegates to the Django one. For example, you could introduce WSGI
 middleware here, or combine a Django application with an application of another
 framework.
 """
-activate_this = '/root/sharifdaily-venv/bin/activate_this.py'
-execfile(activate_this, dict(__file__=activate_this))
-
 import os, sys
+
+# activate virtualenv
+activate_this = os.path.expanduser('/root/sharifdaily-venv/bin/activate_this.py')
+execfile(activate_this, dict(__file__=activate_this))
 
 # We defer to a DJANGO_SETTINGS_MODULE already in the environment. This breaks
 # if running multiple sites in the same mod_wsgi process. To fix this, use

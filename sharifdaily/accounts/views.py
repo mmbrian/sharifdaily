@@ -8,9 +8,9 @@ from django.core.mail import send_mail, BadHeaderError
 from random import choice
 from string import digits, ascii_lowercase, ascii_uppercase
 
-from .utils import user_present
+from .utils import user_present, diff
 from .models import Profile
-from settings import SERVER_ADDRESS
+from sharifdaily.settings import SERVER_ADDRESS
 
 
 SECRET_KEY = 'sharif0@4-64m+wcv*#l2-ula5qq5gd@-bn-#^8&8&axfz3zrp48!x7=daily'
@@ -34,7 +34,8 @@ def login(request, uname, pwd):
 def register(request):
 	if request.method == 'POST':
 		key = request.POST['key']
-		if (key == REAL_SECRET_KEY):
+		# if (key == REAL_SECRET_KEY):
+		if diff(key, REAL_SECRET_KEY) < 3:
 			username = request.POST['username']
 			email = request.POST['email']
 			if not user_present(username, email):
@@ -42,14 +43,15 @@ def register(request):
 				user = User.objects.create_user(username, email, password)
 				user.first_name = request.POST['first_name']
 				user.last_name = request.POST['last_name']
+				user.is_active = False
 				user.save()
 
-				confirmation_code = ''.join(choice(ascii_uppercase + digits + ascii_lowercase) for x in range(33))
+				confirmation_code = ''.join(choice(ascii_uppercase + digits + ascii_lowercase) for x in xrange(33))
 				major = request.POST['major']
 				profile, new = Profile.objects.get_or_create(user=user, confirmation_code=confirmation_code, major=major)
 				profile.save()
 				send_confirmation_email(username, email, confirmation_code)
-				
+
 				return HttpResponse("created")
 			else:
 				return HttpResponse("exists")
@@ -69,9 +71,5 @@ def activate(request, username, confirmation_code):
 		return HttpResponse('invalid')
 
 def send_confirmation_email(username, to_email, confirmation_code):
-	massage = '''
-	Greetings!\n\n
-	Visit '%s/accounts/activate/%s/%s' in order to activate your account.\n\n
-	Thanks
-	''' % (SERVER_ADDRESS, username, confirmation_code)
-    send_mail('Your SharifDaily Account', message, 'SharifDaily Newspaper', [to_email])
+	message = 'Greetings!\n\nVisit %s/accounts/activate/%s/%s in order to activate your account.\n\nThanks' % (SERVER_ADDRESS, username, confirmation_code)
+	send_mail('Your SharifDaily Account', message, 'SharifDaily Newspaper', [to_email])

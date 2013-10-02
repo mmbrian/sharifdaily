@@ -20,7 +20,7 @@ class Profile(models.Model):
 	user = models.OneToOneField(User, related_name='profile')
 	confirmation_code = models.CharField(max_length=144)
 
-	avatar = ProcessedImageField(upload_to='/avatars/',
+	avatar = ProcessedImageField(upload_to='avatars/',
 								processors=[ResizeToFill(100, 50)],
 								format='JPEG',
 								options={'quality': 60})

@@ -16,9 +16,9 @@ import os, sys
 import site
 # activate virtualenv
 # activate_this = os.path.expanduser('/root/sharifdaily-venv/bin/activate_this.py')
-activate_this = os.path.expanduser('/home/dsuser/sharifdaily2-venv/bin/activate_this.py')
+activate_this = os.path.expanduser('/var/www/venvs/sharifdaily3-venv/bin/activate_this.py')
 execfile(activate_this, dict(__file__=activate_this))
-site.addsitedir('/home/dsuser/sharifdaily2-venv/lib/python2.7/site-packages')
+site.addsitedir('/var/www/venvs/sharifdaily3-venv/lib/python2.7/site-packages')
 
 # We defer to a DJANGO_SETTINGS_MODULE already in the environment. This breaks
 # if running multiple sites in the same mod_wsgi process. To fix this, use

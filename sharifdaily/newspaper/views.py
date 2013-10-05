@@ -14,7 +14,7 @@ REPORTS_PER_PAGE = 10
 COMMENTS_PER_PAGE = 10
 
 def get_articles(request, page):
-	article_list = Article.objects.filter(published = True).values('date', 'headline', 'view_count', 'photo').order_by('-date')
+	article_list = Article.objects.filter(published = True).values('id', 'date', 'headline', 'content', 'view_count', 'photo').order_by('-date')
 	page = int(page)
 	start = (page - 1) * ARTICLES_PER_PAGE
 	end = page * ARTICLES_PER_PAGE
@@ -34,15 +34,27 @@ def get_reports(request, page):
 	end = page * REPORTS_PER_PAGE
 	return HttpResponse(simplejson.dumps(list(report_list[start:end]), cls=DjangoJSONEncoder))	
 
-def get_article_comments(request, page):
-	return get_comments(ArticleComment, int(page))
-def get_report_comments(request, page):
-	return get_comments(ReportComment, int(page))
-def get_comments(model, page_num):
-	comment_list = model.objects.filter(is_public = True).values('created', 'author', 'content').order_by('-created')
-	start = (page_num - 1) * COMMENTS_PER_PAGE
-	end = page_num * COMMENTS_PER_PAGE
-	return HttpResponse(simplejson.dumps(list(comment_list[start:end]), cls=DjangoJSONEncoder))		
+def get_article_comments(request, page, _id):
+	try:
+		article = Article.objects.get(id=int(_id))
+		comment_list = ArticleComment.objects.filter(article=article, is_public=True).values('created', 'tag', 'content').order_by('-created')	
+		page_num = int(page)
+		start = (page_num - 1) * COMMENTS_PER_PAGE
+		end = page_num * COMMENTS_PER_PAGE
+		return HttpResponse(simplejson.dumps(list(comment_list[start:end]), cls=DjangoJSONEncoder))	
+	except Article.DoesNotExist:
+		return HttpResponse('invalid article')		
+
+def get_report_comments(request, page, _id):
+	try:
+		report = Report.objects.get(id=int(_id))
+		comment_list = ReportComment.objects.filter(report=report, is_public=True).values('created', 'tag', 'content').order_by('-created')	
+		page_num = int(page)
+		start = (page_num - 1) * COMMENTS_PER_PAGE
+		end = page_num * COMMENTS_PER_PAGE
+		return HttpResponse(simplejson.dumps(list(comment_list[start:end]), cls=DjangoJSONEncoder))	
+	except Report.DoesNotExist:
+		return HttpResponse('invalid report')	
 
 def get_article_likes(request, _id):
 	return get_likes(Article, int(_id))
@@ -67,6 +79,7 @@ def post_article_comment(request):
 				user = User.objects.get(id=author_id)
 				article = Article.objects.get(id=article_id)
 				comment = ArticleComment(author=user, article=article, content=content)
+				comment.tag = user.get_full_name()
 				comment.save()
 				return HttpResponse(str(comment.id))
 			except User.DoesNotExist:
@@ -90,6 +103,7 @@ def post_report_comment(request):
 				user = User.objects.get(id=author_id)
 				report = Report.objects.get(id=report_id)
 				comment = reportComment(author=user, report=report, content=content)
+				comment.tag = user.get_full_name()
 				comment.save()
 				return HttpResponse(str(comment.id))
 			except User.DoesNotExist:

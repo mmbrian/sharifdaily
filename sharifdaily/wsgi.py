@@ -14,7 +14,7 @@ framework.
 """
 import os, sys
 import site
-activate virtualenv
+# activate virtualenv
 activate_this = os.path.expanduser('/root/sharifdaily-venv/bin/activate_this.py')
 
 activate_this = os.path.expanduser('/var/www/venvs/sharifdaily3-venv/bin/activate_this.py')

@@ -8,6 +8,7 @@ class Archive(models.Model):
 	date = models.DateTimeField(auto_now_add=True)
 	title = models.CharField(max_length=144)
 	pdf = models.FileField(upload_to='archives/', max_length=200, blank=False)
+	tag = models.CharField(max_length=144, blank=True) # for storing arbitrary data
 
 	def __unicode__(self):
 		return unicode(self.title)
@@ -18,6 +19,7 @@ class Article(models.Model):
 	content = models.TextField()
 	view_count = models.IntegerField(blank=True, null=True, default=0)
 	published = models.BooleanField(default=False)
+	tag = models.CharField(max_length=144, blank=True) # for storing arbitrary data
 
 	photo = models.ImageField(upload_to='article_photos/', blank=True)
 	photo_thumbnail = ImageSpecField(source='photo',
@@ -35,6 +37,7 @@ class Report(models.Model):
 	content = models.TextField(blank=True)
 	view_count = models.IntegerField(blank=True, null=True, default=0)
 	published = models.BooleanField(default=False)
+	tag = models.CharField(max_length=144, blank=True) # for storing arbitrary data
 
 	photo = ProcessedImageField(upload_to='report_photos/',
 								processors=[ResizeToFill(640, 480)],
@@ -54,6 +57,7 @@ class ArticleComment(models.Model):
 	content = models.TextField()
 	article = models.ForeignKey(Article, related_name="comments")
 	is_public = models.BooleanField(default=False)
+	tag = models.CharField(max_length=144, blank=True) # for now I just use it to store an author's name
 
 	def __unicode__(self):
 		return unicode("%s: %s" % (self.article, self.content[:60]))
@@ -64,6 +68,7 @@ class ReportComment(models.Model):
 	content = models.TextField()
 	report = models.ForeignKey(Report, related_name="comments")
 	is_public = models.BooleanField(default=False)
+	tag = models.CharField(max_length=144, blank=True) # for now I just use it to store an author's name
 
 	def __unicode__(self):
 		return unicode("%s: %s" % (self.report, self.content[:60]))

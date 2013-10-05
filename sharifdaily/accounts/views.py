@@ -12,7 +12,6 @@ from .utils import user_present, diff
 from .models import Profile
 from sharifdaily.settings import SERVER_ADDRESS
 
-
 SECRET_KEY = 'sharif0@4-64m+wcv*#l2-ula5qq5gd@-bn-#^8&8&axfz3zrp48!x7=daily'
 # rot13(base64(SECRET_KEY)) > use this for registration
 REAL_SECRET_KEY = 'p2uupzyzZRN0YGL0oFg3L3LdV2jlYKIfLGIkpGIaMRNgLz4gV144WwtzLKuzrwA6paN0BPS4Am1xLJyfrD=='
@@ -71,5 +70,8 @@ def activate(request, username, confirmation_code):
 		return HttpResponse('invalid')
 
 def send_confirmation_email(username, to_email, confirmation_code):
-	message = 'Greetings!\n\nVisit %s/accounts/activate/%s/%s in order to activate your account.\n\nThanks' % (SERVER_ADDRESS, username, confirmation_code)
+	message = 'Greetings!\n\nVisit %saccounts/activate/%s/%s in order to activate your account.\n\nThanks' % (SERVER_ADDRESS, username, confirmation_code)
 	send_mail('Your SharifDaily Account', message, 'SharifDaily Newspaper', [to_email])
+
+
+# TODO Post Profile Picture, Get/Post History, Post New Password 

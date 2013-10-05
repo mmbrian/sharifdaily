@@ -143,6 +143,9 @@ DJANGO_APPS = (
 THIRT_PARTY_APPS = (
     "south",
     'imagekit',
+    'filer',
+    'mptt',
+    'easy_thumbnails',
 )
 
 LOCAL_APPS = (
@@ -161,6 +164,8 @@ EMAIL_HOST_USER = 'sharif.daily.mobile@gmail.com'
 EMAIL_HOST_PASSWORD = '*Sharif*.*daily*.*Mobile*'
 EMAIL_PORT = 587
 EMAIL_SUBJECT_PREFIX = 'SharifDaily '
+# DEFAULT_FROM_EMAIL = ADMINS[0][1]
+# SERVER_EMAIL = DEFAULT_FROM_EMAIL
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to

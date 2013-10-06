@@ -28,6 +28,8 @@ site.addsitedir('/var/www/venvs/sharifdaily3-venv/lib/python2.7/site-packages')
 path = '/var/www/temp/sd/sharifdaily'
 if path not in sys.path:
 	sys.path.append(path)
+# removing paths from outside virtual directory
+sys.path = filter(lambda path: not path.startswith('/usr'), sys.path)
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "sharifdaily.settings")
 

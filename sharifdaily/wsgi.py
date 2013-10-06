@@ -23,11 +23,7 @@ for path in paths:
 		sys.path.insert(0, path)
 
 # activate virtualenv
-activate_this = os.papaths = ['/var/www/temp/sd/sharifdaily', '/var/www/venvs/sharifdaily3-venv/bin']
-for path in paths:
-	if path not in sys.path:
-		sys.path.append(path)
-		th.expanduser('/var/www/venvs/sharifdaily3-venv/bin/activate_this.py')
+activate_this = os.path.expanduser('/var/www/venvs/sharifdaily3-venv/bin/activate_this.py')
 execfile(activate_this, dict(__file__=activate_this))
 site.addsitedir('/var/www/venvs/sharifdaily3-venv/lib/python2.7/site-packages')
 

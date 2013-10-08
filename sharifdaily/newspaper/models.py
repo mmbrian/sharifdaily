@@ -23,7 +23,7 @@ class Article(models.Model):
 
 	photo = models.ImageField(upload_to='article_photos/', blank=True)
 	photo_thumbnail = ImageSpecField(source='photo',
-                                      processors=[ResizeToFill(100, 50)],
+                                      processors=[ResizeToFill(200, 150)],
                                       format='JPEG',
                                       options={'quality': 70})
 	def __unicode__(self):

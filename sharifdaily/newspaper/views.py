@@ -20,6 +20,13 @@ def get_articles(request, page):
 	end = page * ARTICLES_PER_PAGE
 	return HttpResponse(simplejson.dumps(list(article_list[start:end]), cls=DjangoJSONEncoder))
 
+def get_article_photo_thumbnail(request, _id):
+	try:
+		article = Article.objects.get(id=_id)
+		return HttpResponse(article.photo_thumbnail.url)
+	except Article.DoesNotExist:
+		return HttpResponse('invalid')
+
 def get_archives(request, page):
 	archive_list = Archive.objects.values('date', 'title').order_by('-date')
 	page = int(page)

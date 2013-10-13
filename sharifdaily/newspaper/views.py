@@ -28,7 +28,7 @@ def get_article_photo_thumbnail(request, _id):
 		return HttpResponse('invalid')
 
 def get_archives(request, page):
-	archive_list = Archive.objects.values('date', 'title').order_by('-date')
+	archive_list = Archive.objects.values('date', 'title', 'pdf').order_by('-date')
 	page = int(page)
 	start = (page - 1) * ARCHIVES_PER_PAGE
 	end = page * ARCHIVES_PER_PAGE
@@ -43,8 +43,7 @@ def get_reports(request, page):
 
 def get_article_comments(request, page, _id):
 	try:
-		article = Article.objects.get(id=int(_id))
-		comment_list = ArticleComment.objects.filter(article=article, is_public=True).values('created', 'tag', 'content').order_by('-created')	
+		comment_list = ArticleComment.objects.filter(article__id=int(_id), is_public=True).values('created', 'tag', 'content').order_by('-created')	
 		page_num = int(page)
 		start = (page_num - 1) * COMMENTS_PER_PAGE
 		end = page_num * COMMENTS_PER_PAGE
@@ -54,8 +53,7 @@ def get_article_comments(request, page, _id):
 
 def get_report_comments(request, page, _id):
 	try:
-		report = Report.objects.get(id=int(_id))
-		comment_list = ReportComment.objects.filter(report=report, is_public=True).values('created', 'tag', 'content').order_by('-created')	
+		comment_list = ReportComment.objects.filter(report__id=int(_id), is_public=True).values('created', 'tag', 'content').order_by('-created')	
 		page_num = int(page)
 		start = (page_num - 1) * COMMENTS_PER_PAGE
 		end = page_num * COMMENTS_PER_PAGE
@@ -72,6 +70,27 @@ def get_likes(model, _id):
 		obj = model.objects.get(id=_id)
 		return HttpResponse(str(obj.likes.count()))
 	except model.DoesNotExist:
+		return HttpResponse('0')
+
+def get_article_likes_and_thumbnail(request, _id):
+	try:
+		article = Article.objects.get(id=_id)
+		return HttpResponse(str(article.likes.count()) +'|'+ article.photo_thumbnail.url)
+	except Article.DoesNotExist:
+		return HttpResponse('0|')
+
+def has_liked_article(request, user_id, article_id):
+	try:
+		ret = Like.objects.filter(user__id=int(user_id), article__id=int(article_id)).count()
+		return HttpResponse(str(ret))
+	except Exception:
+		return HttpResponse('0')
+
+def has_liked_report(request, user_id, report_id):
+	try:
+		ret = Like.objects.filter(user__id=int(user_id), report__id=int(report_id)).count()
+		return HttpResponse(str(ret))
+	except Exception:
 		return HttpResponse('0')
 
 @csrf_exempt
@@ -109,7 +128,7 @@ def post_report_comment(request):
 			try:
 				user = User.objects.get(id=author_id)
 				report = Report.objects.get(id=report_id)
-				comment = reportComment(author=user, report=report, content=content)
+				comment = ReportComment(author=user, report=report, content=content)
 				comment.tag = user.get_full_name()
 				comment.save()
 				return HttpResponse(str(comment.id))
@@ -145,6 +164,23 @@ def post_article_like(request):
 		return HttpResponse('invalid request')
 
 @csrf_exempt
+def post_article_unlike(request):
+	if request.method == 'POST':
+		key = request.POST['key']
+		if diff(key, REAL_SECRET_KEY) < 3:
+			author_id = request.POST['author_id']
+			article_id = request.POST['article_id']
+			try:
+				Like.objects.filter(user__id=int(author_id), article__id=int(article_id)).delete()
+				return HttpResponse('deleted')
+			except Exception:
+				return HttpResponse('invalid')
+		else:
+			return HttpResponse('invalid key')
+	else:
+		return HttpResponse('invalid request')
+
+@csrf_exempt
 def post_report_like(request):
 	if request.method == 'POST':
 		key = request.POST['key']
@@ -161,6 +197,23 @@ def post_report_like(request):
 				return HttpResponse('invalid user')
 			except Report.DoesNotExist:
 				return HttpResponse('invalid report')
+		else:
+			return HttpResponse('invalid key')
+	else:
+		return HttpResponse('invalid request')
+
+@csrf_exempt
+def post_report_unlike(request):
+	if request.method == 'POST':
+		key = request.POST['key']
+		if diff(key, REAL_SECRET_KEY) < 3:
+			author_id = request.POST['author_id']
+			report_id = request.POST['report_id']
+			try:
+				Like.objects.filter(user__id=int(author_id), report__id=int(report_id)).delete()
+				return HttpResponse('deleted')
+			except Exception:
+				return HttpResponse('invalid')
 		else:
 			return HttpResponse('invalid key')
 	else:
@@ -208,4 +261,36 @@ def view_report(request):
 	else:
 		return HttpResponse('invalid request')
 
-# TODO: Post Report
+@csrf_exempt
+def post_report(request):
+	if request.method == 'POST':
+		key = request.POST['key']
+		if diff(key, REAL_SECRET_KEY) < 3:
+			user_id = request.POST['author_id']
+			report_title = request.POST['title']
+			
+			exists = Report.objects.filter(headline=report_title).count()
+			if exists:
+				return HttpResponse("exists")
+
+			try:
+				user = User.objects.get(id=int(user_id))
+				report_content = request.POST['text']				
+				image = request.FILES['image']
+				video = request.FILES['video']
+				audio = request.FILES['audio']
+
+				report = Report(author=user, headline=report_title)
+				report.published = False
+				report.photo = image
+				report.video = video
+				report.audio = audio
+
+				report.save()
+				return HttpResponse("saved")
+			except User.DoesNotExist:
+				return HttpResponse("invalid user")
+		else:
+			return HttpResponse('invalid key')
+	else:
+		return HttpResponse('invalid request')

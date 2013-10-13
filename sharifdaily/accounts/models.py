@@ -10,24 +10,28 @@ from imagekit.processors import ResizeToFill
 class UserHistory(models.Model):
 	created = models.DateTimeField(auto_now_add=True)
 	action = models.CharField(max_length=60)
-	content = models.TextField()
+	content = models.TextField(blank=True)
 	owner = models.ForeignKey(User, related_name="history")
+
+	def __unicode__(self):
+		return unicode("%s -> %s: %s" % (self.owner.get_full_name(), self.action, self.content))
 
 class Profile(models.Model):
 	'''
 	A model to store extra info for each user
 	'''
 	user = models.OneToOneField(User, related_name='profile')
-	confirmation_code = models.CharField(max_length=144)
+	confirmation_code = models.CharField(max_length=144, blank=True)
 
 	avatar = ProcessedImageField(upload_to='avatars/',
-								processors=[ResizeToFill(100, 50)],
+								processors=[ResizeToFill(128, 128)],
 								format='JPEG',
-								options={'quality': 60})
-	major = models.CharField(max_length=144)
+								options={'quality': 70},
+								blank=True)
+	major = models.CharField(max_length=144, blank=True)
 
 	def __unicode__(self):
-		return self.user.get_full_name()
+		return unicode(self.user.get_full_name())
 
 # @receiver(post_save, sender=User)
 # def create_profile(sender, instance, created, **kwargs):

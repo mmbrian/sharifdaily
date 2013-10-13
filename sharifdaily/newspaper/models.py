@@ -60,7 +60,7 @@ class ArticleComment(models.Model):
 	tag = models.CharField(max_length=144, blank=True) # for now I just use it to store an author's name
 
 	def __unicode__(self):
-		return unicode("%s: %s" % (self.article, self.content[:60]))
+		return unicode("%s: %s" % (self.article.headline, self.content[:60]))
 
 class ReportComment(models.Model):
 	created = models.DateTimeField(auto_now_add=True)
@@ -71,7 +71,7 @@ class ReportComment(models.Model):
 	tag = models.CharField(max_length=144, blank=True) # for now I just use it to store an author's name
 
 	def __unicode__(self):
-		return unicode("%s: %s" % (self.report, self.content[:60]))
+		return unicode("%s: %s" % (self.report.headline, self.content[:60]))
 
 class Like(models.Model):
 	user = models.ForeignKey(User, related_name="likes")

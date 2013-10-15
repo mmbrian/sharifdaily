@@ -37,7 +37,7 @@ class Report(models.Model):
 	content = models.TextField(blank=True)
 	view_count = models.IntegerField(blank=True, null=True, default=0)
 	published = models.BooleanField(default=False)
-	tag = models.CharField(max_length=144, blank=True) # for storing arbitrary data
+	tag = models.CharField(max_length=144, blank=True) # for now I just use it to store an author's name
 
 	photo = ProcessedImageField(upload_to='report_photos/',
 								processors=[ResizeToFill(640, 480)],

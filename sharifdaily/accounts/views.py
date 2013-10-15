@@ -23,7 +23,7 @@ def login(request, uname, pwd):
 	user = authenticate(username=uname, password=pwd)
 	if user is not None:
 		if user.is_active:
-			return HttpResponse(str(user.id) + '|' + user.get_full_name())
+			return HttpResponse(str(user.id) + '|' + unicode(user.get_full_name())
 		else:
 			return HttpResponse("deactive")
 	else:

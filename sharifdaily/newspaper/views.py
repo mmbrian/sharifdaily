@@ -280,7 +280,7 @@ def post_report(request):
 
 			try:
 				user = User.objects.get(id=int(user_id))
-				report_content = request.POST['text']				
+				report_content = request.POST.get('text', "")
 				image = request.FILES['image']
 				video = request.FILES['video']
 				audio = request.FILES['audio']
@@ -295,6 +295,8 @@ def post_report(request):
 				return HttpResponse("saved")
 			except User.DoesNotExist:
 				return HttpResponse("invalid user")
+			except Exception as error:
+				return HttpResponse(str(error))
 		else:
 			return HttpResponse('invalid key')
 	else:

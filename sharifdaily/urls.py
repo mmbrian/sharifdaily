@@ -17,5 +17,6 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
 )
 
-if settings.SERVE_STATIC:
-	urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+if 'SERVE_STATIC' in dir(settings):
+	if settings.SERVE_STATIC:
+		urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

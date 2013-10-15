@@ -13,6 +13,8 @@ root = lambda * x: os.path.join(os.path.abspath(PROJECT_ROOT), *x)
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
+SERVE_STATIC = False
+
 SERVER_ADDRESS = 'http://81.31.166.199/'
 
 ADMINS = (

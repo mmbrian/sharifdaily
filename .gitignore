@@ -1,4 +1,5 @@
 *.pyc
 sharifdaily/settings/local.py
+sharifdaily/wsgi.py
 uploads/
 static/

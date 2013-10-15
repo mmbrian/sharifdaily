@@ -40,7 +40,7 @@ def get_archives(request, page):
 	return HttpResponse(json.dumps(list(archive_list[start:end]), cls=DjangoJSONEncoder))
 
 def get_reports(request, page):
-	report_list = Report.objects.filter(published = True).values('date', 'headline', 'view_count', 'likes', 'content', 'photo', 'audio', 'video').order_by('-date')
+	report_list = Report.objects.filter(published = True).values('date', 'headline', 'view_count', 'author', 'content', 'photo', 'audio', 'video').order_by('-date')
 	page = int(page)
 	start = (page - 1) * REPORTS_PER_PAGE
 	end = page * REPORTS_PER_PAGE
@@ -280,13 +280,15 @@ def post_report(request):
 
 			try:
 				user = User.objects.get(id=int(user_id))
-				report_content = request.POST.get('text', "")
+
+				report_content = request.POST.get('text', '')
 				image = request.FILES.get('image', None)
 				video = request.FILES.get('video', None)
 				audio = request.FILES.get('audio', None)
 
 				report = Report(author=user, headline=report_title)
 				report.published = False
+				report.content = report_content
 				report.photo = image
 				report.video = video
 				report.audio = audio
@@ -296,7 +298,8 @@ def post_report(request):
 			except User.DoesNotExist:
 				return HttpResponse("invalid user")
 			except Exception as error:
-				return HttpResponse(str(error))
+				# return HttpResponse(str(error))
+				return HttpResponse('invalid report')
 		else:
 			return HttpResponse('invalid key')
 	else:

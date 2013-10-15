@@ -40,7 +40,7 @@ def get_archives(request, page):
 	return HttpResponse(json.dumps(list(archive_list[start:end]), cls=DjangoJSONEncoder))
 
 def get_reports(request, page):
-	report_list = Report.objects.filter(published = True).values('date', 'headline', 'view_count', 'author', 'tag', 'content', 'photo', 'audio', 'video').order_by('-date')
+	report_list = Report.objects.filter(published = True).values('id', 'date', 'headline', 'view_count', 'author', 'tag', 'content', 'photo', 'audio', 'video').order_by('-date')
 	page = int(page)
 	start = (page - 1) * REPORTS_PER_PAGE
 	end = page * REPORTS_PER_PAGE

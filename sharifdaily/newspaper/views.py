@@ -1,5 +1,5 @@
 from django.http import HttpResponse
-from django.utils import simplejson
+# from django.utils import simplejson
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
@@ -7,6 +7,11 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import *
 from sharifdaily.accounts.views import REAL_SECRET_KEY
 from sharifdaily.accounts.utils import diff
+
+try:
+    import json
+except ImportError:
+   from django.utils import simplejson as json
 
 ARTICLES_PER_PAGE = 10
 ARCHIVES_PER_PAGE = 10
@@ -18,7 +23,7 @@ def get_articles(request, page):
 	page = int(page)
 	start = (page - 1) * ARTICLES_PER_PAGE
 	end = page * ARTICLES_PER_PAGE
-	return HttpResponse(simplejson.dumps(list(article_list[start:end]), cls=DjangoJSONEncoder))
+	return HttpResponse(json.dumps(list(article_list[start:end]), cls=DjangoJSONEncoder))
 
 def get_article_photo_thumbnail(request, _id):
 	try:
@@ -32,14 +37,14 @@ def get_archives(request, page):
 	page = int(page)
 	start = (page - 1) * ARCHIVES_PER_PAGE
 	end = page * ARCHIVES_PER_PAGE
-	return HttpResponse(simplejson.dumps(list(archive_list[start:end]), cls=DjangoJSONEncoder))
+	return HttpResponse(json.dumps(list(archive_list[start:end]), cls=DjangoJSONEncoder))
 
 def get_reports(request, page):
 	report_list = Report.objects.filter(published = True).values('date', 'headline', 'view_count', 'likes', 'content', 'photo', 'audio', 'video').order_by('-date')
 	page = int(page)
 	start = (page - 1) * REPORTS_PER_PAGE
 	end = page * REPORTS_PER_PAGE
-	return HttpResponse(simplejson.dumps(list(report_list[start:end]), cls=DjangoJSONEncoder))	
+	return HttpResponse(json.dumps(list(report_list[start:end]), cls=DjangoJSONEncoder))	
 
 def get_article_comments(request, page, _id):
 	try:
@@ -47,7 +52,7 @@ def get_article_comments(request, page, _id):
 		page_num = int(page)
 		start = (page_num - 1) * COMMENTS_PER_PAGE
 		end = page_num * COMMENTS_PER_PAGE
-		return HttpResponse(simplejson.dumps(list(comment_list[start:end]), cls=DjangoJSONEncoder))	
+		return HttpResponse(json.dumps(list(comment_list[start:end]), cls=DjangoJSONEncoder))	
 	except Article.DoesNotExist:
 		return HttpResponse('invalid article')		
 
@@ -57,7 +62,7 @@ def get_report_comments(request, page, _id):
 		page_num = int(page)
 		start = (page_num - 1) * COMMENTS_PER_PAGE
 		end = page_num * COMMENTS_PER_PAGE
-		return HttpResponse(simplejson.dumps(list(comment_list[start:end]), cls=DjangoJSONEncoder))	
+		return HttpResponse(json.dumps(list(comment_list[start:end]), cls=DjangoJSONEncoder))	
 	except Report.DoesNotExist:
 		return HttpResponse('invalid report')	
 

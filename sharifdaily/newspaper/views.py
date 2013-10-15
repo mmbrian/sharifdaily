@@ -281,9 +281,9 @@ def post_report(request):
 			try:
 				user = User.objects.get(id=int(user_id))
 				report_content = request.POST.get('text', "")
-				image = request.FILES['image']
-				video = request.FILES['video']
-				audio = request.FILES['audio']
+				image = request.FILES.get('image', None)
+				video = request.FILES.get('video', None)
+				audio = request.FILES.get('audio', None)
 
 				report = Report(author=user, headline=report_title)
 				report.published = False

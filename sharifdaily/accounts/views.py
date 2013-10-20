@@ -10,7 +10,7 @@ from random import choice
 from string import digits, ascii_lowercase, ascii_uppercase
 
 from .utils import user_present, diff
-from .models import Profile
+from .models import Profile, UserHistory
 from sharifdaily.settings import SERVER_ADDRESS
 
 try:
@@ -21,6 +21,9 @@ except ImportError:
 SECRET_KEY = 'sharif0@4-64m+wcv*#l2-ula5qq5gd@-bn-#^8&8&axfz3zrp48!x7=daily'
 # rot13(base64(SECRET_KEY)) > use this for registration
 REAL_SECRET_KEY = 'p2uupzyzZRN0YGL0oFg3L3LdV2jlYKIfLGIkpGIaMRNgLz4gV144WwtzLKuzrwA6paN0BPS4Am1xLJyfrD=='
+
+HISTORYITEMS_PER_PAGE = 10
+
 
 def register_key(request):
 	return HttpResponse(SECRET_KEY)
@@ -49,6 +52,33 @@ def login(request, uname, pwd):
 			return HttpResponse("deactive")
 	else:
 		return HttpResponse("invalid")
+
+def get_user_history(request, user_id, page):
+	history_list = UserHistory.objects.filter(owner__id = int(user_id)).values('id', 'created', 'action', 'content').order_by('-created')
+	page = int(page)
+	start = (page - 1) * HISTORYITEMS_PER_PAGE
+	end = page * HISTORYITEMS_PER_PAGE
+	return HttpResponse(json.dumps(list(history_list[start:end]), cls=DjangoJSONEncoder))
+
+@csrf_exempt
+def post_user_history(request):
+	if request.method == 'POST':
+		key = request.POST['key']
+		if diff(key, REAL_SECRET_KEY) < 3:
+			user_id = request.POST['user_id']
+			action  = request.POST['action']
+			content = request.POST['content']
+			try:
+				user = User.objects.get(id=user_id)
+				item = UserHistory(owner=user, action=action, content=content)
+				item.save()
+				return HttpResponse(str(item.id))
+			except User.DoesNotExist:
+				return HttpResponse('invalid user')
+		else:
+			return HttpResponse('invalid key')
+	else:
+		return HttpResponse('invalid request')
 
 @csrf_exempt
 def change_password(request):

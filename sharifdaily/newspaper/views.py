@@ -14,10 +14,10 @@ try:
 except ImportError:
    from django.utils import simplejson as json
 
-ARTICLES_PER_PAGE = 10
-ARCHIVES_PER_PAGE = 10
-REPORTS_PER_PAGE = 10
-COMMENTS_PER_PAGE = 10
+ARTICLES_PER_PAGE = 50
+ARCHIVES_PER_PAGE = 50
+REPORTS_PER_PAGE = 50
+COMMENTS_PER_PAGE = 50
 
 def get_articles(request, page):
 	article_list = Article.objects.filter(published = True).values('id', 'date', 'headline', 'content', 'view_count', 'photo').order_by('-date')

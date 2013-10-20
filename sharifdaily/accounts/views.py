@@ -22,7 +22,7 @@ SECRET_KEY = 'sharif0@4-64m+wcv*#l2-ula5qq5gd@-bn-#^8&8&axfz3zrp48!x7=daily'
 # rot13(base64(SECRET_KEY)) > use this for registration
 REAL_SECRET_KEY = 'p2uupzyzZRN0YGL0oFg3L3LdV2jlYKIfLGIkpGIaMRNgLz4gV144WwtzLKuzrwA6paN0BPS4Am1xLJyfrD=='
 
-HISTORYITEMS_PER_PAGE = 10
+HISTORYITEMS_PER_PAGE = 30
 
 
 def register_key(request):

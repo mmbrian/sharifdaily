@@ -84,7 +84,7 @@ def change_picture(request):
 					user.profile.avatar = image
 				else:
 					user.profile.avatar.delete()
-				user.save()
+				user.profile.save()
 				return HttpResponse("changed")
 			except User.DoesNotExist:
 				return HttpResponse("invalid user")

@@ -82,10 +82,12 @@ def change_picture(request):
 				image = request.FILES.get('image', None)
 				if (request_type == 'set'):
 					user.profile.avatar = image
+					user.profile.save()
+					return HttpResponse(user.profile.avatar.url)		
 				else:
 					user.profile.avatar.delete()
-				user.profile.save()
-				return HttpResponse("changed")
+					user.profile.save()
+					return HttpResponse("deleted")
 			except User.DoesNotExist:
 				return HttpResponse("invalid user")
 			except Exception as error:

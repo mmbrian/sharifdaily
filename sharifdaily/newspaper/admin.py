@@ -11,7 +11,8 @@ class CommentAdmin(admin.ModelAdmin):
     exclude = ('tag',)
 
 class ArchiveAdmin(admin.ModelAdmin):
-    exclude = ('tag',)
+    # exclude = ('tag',)
+    pass
 
 admin.site.register(Report, PostAdmin)
 admin.site.register(Article, PostAdmin)

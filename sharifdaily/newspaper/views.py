@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
+from django.db.models import Q
 
 from .models import *
 from sharifdaily.accounts.views import REAL_SECRET_KEY
@@ -32,12 +33,18 @@ def get_article_photo_thumbnail(request, _id):
 	except Article.DoesNotExist:
 		return HttpResponse('invalid')
 
-def get_archives(request, page):
-	archive_list = Archive.objects.values('date', 'title', 'pdf').order_by('-date')
+def get_main_archives(request, page):
+	return get_archives(request, page, True)
+def get_other_archives(request, page):
+	return get_archives(request, page, False)
+def get_archives(request, page, is_main):
+	archive_list = Archive.objects.filter(Q(tag='') if is_main else ~Q(tag='')).values('date', 'title', 'pdf').order_by('-date')
 	page = int(page)
 	start = (page - 1) * ARCHIVES_PER_PAGE
 	end = page * ARCHIVES_PER_PAGE
 	return HttpResponse(json.dumps(list(archive_list[start:end]), cls=DjangoJSONEncoder))
+
+
 
 def get_reports(request, page):
 	report_list = Report.objects.filter(published = True).values('id', 'date', 'headline', 'view_count', 'author', 'tag', 'content', 'photo', 'audio', 'video').order_by('-date')

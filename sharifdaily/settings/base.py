@@ -153,6 +153,7 @@ THIRT_PARTY_APPS = (
 LOCAL_APPS = (
    "sharifdaily.accounts",
    "sharifdaily.newspaper",
+   "sharifdaily.kernel",
 )
 
 INSTALLED_APPS = DJANGO_APPS + THIRT_PARTY_APPS + LOCAL_APPS

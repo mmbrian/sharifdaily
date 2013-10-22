@@ -145,9 +145,9 @@ DJANGO_APPS = (
 THIRT_PARTY_APPS = (
     "south",
     'imagekit',
-    'filer',
-    'mptt',
-    'easy_thumbnails',
+    # 'filer',
+    # 'mptt',
+    # 'easy_thumbnails',
 )
 
 LOCAL_APPS = (

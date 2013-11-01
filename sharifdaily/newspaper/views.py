@@ -38,7 +38,7 @@ def get_main_archives(request, page):
 def get_other_archives(request, page):
 	return get_archives(request, page, False)
 def get_archives(request, page, is_main):
-	archive_list = Archive.objects.filter(Q(tag='') if is_main else ~Q(tag='')).values('date', 'title', 'pdf').order_by('-date')
+	archive_list = Archive.objects.filter(Q(tag='') if is_main else ~Q(tag='')).values('id', 'tag', 'date', 'title', 'pdf').order_by('-date')
 	page = int(page)
 	start = (page - 1) * ARCHIVES_PER_PAGE
 	end = page * ARCHIVES_PER_PAGE

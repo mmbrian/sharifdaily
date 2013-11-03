@@ -209,14 +209,12 @@ def confirm_pwd_reset(request, username, confirmation_code):
 		return HttpResponse('invalid')	
 
 def send_confirmation_email(username, to_email, confirmation_code):
-	message = 
-	'Greetings!\n\nVisit %saccounts/activate/%s/%s in order to activate your account.' + \
+	message = 'Greetings!\n\nVisit %saccounts/activate/%s/%s in order to activate your account.' + \
 	'\n\nThank You for signing up with us!\nSharifDaily Team' % (SERVER_ADDRESS, username, confirmation_code)
 	send_mail('Your SharifDaily Account', message, 'SharifDaily Newspaper', [to_email])
 
 def send_pwd_reset_email(username, to_email, new_password, comfirmation_code):
-	message = 
-	'Greetings!\n\nA password reset request has been made for your account.\n' + \
+	message = 'Greetings!\n\nA password reset request has been made for your account.\n' + \
 	'If you have not requested this, simply ignore this message & do NOT visit the attached link.\n\n' + \
 	'A temporary password has been made for you which would only be activated upon ' + \
 	'visiting %saccounts/passwordreset/confirm/%s/%s\n\n' % (SERVER_ADDRESS, username, confirmation_code) + \

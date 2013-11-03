@@ -218,6 +218,6 @@ def send_pwd_reset_email(username, to_email, new_password, confirmation_code):
 	'If you have not requested this, simply ignore this message & do NOT visit the attached link.\n\n' + \
 	'A temporary password has been made for you which would only be activated upon ' + \
 	'visiting %saccounts/passwordreset/confirm/%s/%s\n\n' % (SERVER_ADDRESS, username, confirmation_code) + \
-	'You need to visit the above url, then login with your new password & change it to your prefered password from the Profile view.' + \
-	'You new password is: %s\n\Have a Wonderful day!\nSharifDaily Team' % new_password
+	'You need to visit the above url, then login with your new password & change it to your prefered password from the Profile view.\n' + \
+	'You new password is: %s\n\nHave a Wonderful day!\nSharifDaily Team' % new_password
 	send_mail('Your SharifDaily Account', message, 'SharifDaily Newspaper', [to_email])

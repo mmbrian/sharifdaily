@@ -135,7 +135,7 @@ def register(request):
 		# if (key == REAL_SECRET_KEY):
 		if diff(key, REAL_SECRET_KEY) < 3:
 			username = request.POST['username']
-			email = request.POST['email']
+			email    = request.POST['email']
 			if not user_present(username, email):
 				password = request.POST['password']
 				user = User.objects.create_user(username, email, password)
@@ -156,6 +156,33 @@ def register(request):
 		else:
 			return HttpResponse("invalid")
 
+@csrf_exempt
+def reset_password(request):
+	if request.method == 'POST':
+		key = request.POST['key']
+		# if (key == REAL_SECRET_KEY):
+		if diff(key, REAL_SECRET_KEY) < 3:
+			username = request.POST['username']
+			user = User.objects.filter(username=username)
+			if user.count():
+				user = user[0]
+
+				email = user.email
+				confirmation_code = ''.join(choice(ascii_uppercase + digits + ascii_lowercase) for x in xrange(33))
+				profile = Profile.objects.get(user=user)
+				if user.is_active:
+					profile.confirmation_code = confirmation_code
+					profile.save()
+				else:
+					confirmation_code = profile.confirmation_code
+			
+				send_pwd_reset_email(username, email, confirmation_code, confirmation_code)
+				return HttpResponse("request made")
+			else:
+				return HttpResponse("invalid user")
+		else:
+			return HttpResponse("invalid")
+
 def activate(request, username, confirmation_code):
 	try:
 		user = User.objects.get(username=username)
@@ -168,10 +195,31 @@ def activate(request, username, confirmation_code):
 	except User.DoesNotExist:
 		return HttpResponse('invalid')
 
+def confirm_pwd_reset(request, username, confirmation_code):
+	try:
+		user = User.objects.get(username=username)
+		profile = user.profile
+		valid_code = profile.confirmation_code == confirmation_code
+		if valid_code:
+			new_password = confirmation_code
+			user.set_password(new_password)
+			user.save()
+		return render_to_response('accounts/password_reset_complete.html', locals())
+	except User.DoesNotExist:
+		return HttpResponse('invalid')	
 
 def send_confirmation_email(username, to_email, confirmation_code):
-	message = 'Greetings!\n\nVisit %saccounts/activate/%s/%s in order to activate your account.\n\nThanks' % (SERVER_ADDRESS, username, confirmation_code)
+	message = 
+	'Greetings!\n\nVisit %saccounts/activate/%s/%s in order to activate your account.' + \
+	'\n\nThank You for signing up with us!\nSharifDaily Team' % (SERVER_ADDRESS, username, confirmation_code)
 	send_mail('Your SharifDaily Account', message, 'SharifDaily Newspaper', [to_email])
 
-
-# TODO Post Profile Picture, Get/Post History, Post New Password 
+def send_pwd_reset_email(username, to_email, new_password, comfirmation_code):
+	message = 
+	'Greetings!\n\nA password reset request has been made for your account.\n' + \
+	'If you have not requested this, simply ignore this message & do NOT visit the attached link.\n\n' + \
+	'A temporary password has been made for you which would only be activated upon ' + \
+	'visiting %saccounts/passwordreset/confirm/%s/%s\n\n' % (SERVER_ADDRESS, username, confirmation_code) + \
+	'You need to visit the above url, then login with your new password & change it to your prefered password from the Profile view.' + \
+	'You new password is: %s\n\Have a Wonderful day!\nSharifDaily Team' % new_password
+	send_mail('Your SharifDaily Account', message, 'SharifDaily Newspaper', [to_email])

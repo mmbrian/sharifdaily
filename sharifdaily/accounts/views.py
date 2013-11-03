@@ -193,7 +193,7 @@ def reset_password(request):
 				else:
 					confirmation_code = profile.confirmation_code
 			
-				send_pwd_reset_email(username, email, confirmation_code, confirmation_code)
+				send_pwd_reset_email(username, email, confirmation_code[:8], confirmation_code)
 				return HttpResponse("request made")
 			else:
 				return HttpResponse("invalid user")
@@ -206,7 +206,7 @@ def confirm_pwd_reset(request, username, confirmation_code):
 		profile = user.profile
 		valid_code = profile.confirmation_code == confirmation_code
 		if valid_code:
-			new_password = confirmation_code
+			new_password = confirmation_code[:8]
 			user.set_password(new_password)
 			user.save()
 		return render_to_response('accounts/password_reset_complete.html', locals())

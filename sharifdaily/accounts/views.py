@@ -169,8 +169,8 @@ def activate(request, username, confirmation_code):
 		return HttpResponse('invalid')
 
 def send_confirmation_email(username, to_email, confirmation_code):
-	message = 'Greetings!\n\nVisit %saccounts/activate/%s/%s in order to activate your account.' + \
-	'\n\nThank You for signing up with us!\nSharifDaily Team' % (SERVER_ADDRESS, username, confirmation_code)
+	message = 'Greetings!\n\nVisit %saccounts/activate/%s/%s in order to activate your account.' % (SERVER_ADDRESS, username, confirmation_code) + \
+	'\n\nThank You for signing up with us!\nSharifDaily Team' 
 	send_mail('Your SharifDaily Account', message, 'SharifDaily Newspaper', [to_email])
 
 @csrf_exempt

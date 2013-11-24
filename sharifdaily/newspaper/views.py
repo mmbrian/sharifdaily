@@ -118,6 +118,7 @@ def post_article_comment(request):
 				article = Article.objects.get(id=article_id)
 				comment = ArticleComment(author=user, article=article, content=content)
 				comment.tag = user.get_full_name()
+				comment.is_public = True # Comment for moderation
 				comment.save()
 				return HttpResponse(str(comment.id))
 			except User.DoesNotExist:
@@ -142,6 +143,7 @@ def post_report_comment(request):
 				report = Report.objects.get(id=report_id)
 				comment = ReportComment(author=user, report=report, content=content)
 				comment.tag = user.get_full_name()
+				comment.is_public = True # Comment for moderation
 				comment.save()
 				return HttpResponse(str(comment.id))
 			except User.DoesNotExist:
@@ -294,7 +296,7 @@ def post_report(request):
 				audio = request.FILES.get('audio', None)
 
 				report = Report(author=user, headline=report_title)
-				report.published = False
+				report.published = True # Comment for moderation
 				report.content = report_content
 				report.photo = image
 				report.video = video

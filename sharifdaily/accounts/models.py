@@ -29,6 +29,12 @@ class Profile(models.Model):
 								options={'quality': 70},
 								blank=True)
 	major = models.CharField(max_length=144, blank=True)
+	national_code = models.CharField(max_length=14, blank=True)
+	phone_number = models.CharField(max_length=16, blank=True)
+	edu_status = models.CharField(max_length=144, blank=True)
+	tag1 = models.CharField(max_length=144, blank=True)
+	tag2 = models.CharField(max_length=144, blank=True)
+	tag3 = models.CharField(max_length=144, blank=True)
 
 	def __unicode__(self):
 		return unicode(self.user.get_full_name())

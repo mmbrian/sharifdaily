@@ -32,21 +32,26 @@ def login(request, uname, pwd):
 	user = authenticate(username=uname, password=pwd)
 	if user is not None:
 		if user.is_active:
-			user_id        = user.id
-			user_full_name = user.get_full_name()
-			user_major     = ''
-			user_avatar    = ''
+			user_id            = user.id
+			user_full_name     = user.get_full_name()
+			user_major         = ''
+			user_avatar        = ''
+			user_national_code = ''
+			user_phone_number  = ''
+			user_edu_status    = ''
 			try:
-				user_major = user.profile.major
-				user_avatar= user.profile.avatar.url # sth like /uploads/avatars/...
+				user_major         = user.profile.major
+				user_avatar        = user.profile.avatar.url # sth like /uploads/avatars/...
+				user_national_code = user.profile.national_code
+				user_phone_number  = user.profile.phone_number
+				user_edu_status    = user.profile.edu_status
 			except ValueError:
-				user_avatar= ''
+				pass
 			except Profile.DoesNotExist:
-				user_major = ''
-				user_avatar= ''
+				pass
 
-			keys = ["id", "full_name", "major", "avatar_url"]
-			values = [user_id, user_full_name, user_major, user_avatar]
+			keys = ["id", "full_name", "major", "avatar_url", "national_code", "phone_number", "edu_status"]
+			values = [user_id, user_full_name, user_major, user_avatar, user_national_code, user_phone_number, user_edu_status]
 			return HttpResponse(json.dumps(dict(zip(keys, values)), cls=DjangoJSONEncoder))
 		else:
 			return HttpResponse("deactive")
@@ -145,8 +150,15 @@ def register(request):
 				user.save()
 
 				confirmation_code = ''.join(choice(ascii_uppercase + digits + ascii_lowercase) for x in xrange(33))
-				major = request.POST['major']
-				profile, new = Profile.objects.get_or_create(user=user, confirmation_code=confirmation_code, major=major)
+				major         = request.POST['major']
+				national_code = request.POST['national_code']
+				phone_number  = request.POST['phone_number']
+				edu_status    = request.POST['edu_status']
+
+				profile = Profile(user=user, confirmation_code=confirmation_code, major=major)
+				profile.national_code = national_code
+				profile.phone_number  = phone_number
+				profile.edu_status    = edu_status
 				profile.save()
 				send_confirmation_email(username, email, confirmation_code)
 

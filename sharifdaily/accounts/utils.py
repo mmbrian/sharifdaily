@@ -36,9 +36,9 @@ def email_present(email):
 def user_present(username, email):
     try:
         User.objects.get(Q(email=email) | Q(username=username))
-        return True
     except User.DoesNotExist:
         return False
+    return True
 
 def diff(s1, s2):
     s1len, s2len = len(s1), len(s2)

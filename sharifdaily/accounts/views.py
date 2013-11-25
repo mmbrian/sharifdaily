@@ -58,6 +58,35 @@ def login(request, uname, pwd):
 	else:
 		return HttpResponse("invalid")
 
+def get_user_profile(request, user_id):
+	try:
+		user = User.objects.get(id=int(user_id))
+		if user.is_active:
+			user_full_name     = user.get_full_name()
+			user_major         = ''
+			user_avatar        = ''
+			user_national_code = ''
+			user_phone_number  = ''
+			user_edu_status    = ''
+			try:
+				user_major         = user.profile.major
+				user_avatar        = user.profile.avatar.url # sth like /uploads/avatars/...
+				user_national_code = user.profile.national_code
+				user_phone_number  = user.profile.phone_number
+				user_edu_status    = user.profile.edu_status
+			except ValueError:
+				pass
+			except Profile.DoesNotExist:
+				pass
+
+			keys = ["full_name", "major", "avatar_url", "national_code", "phone_number", "edu_status"]
+			values = [user_full_name, user_major, user_avatar, user_national_code, user_phone_number, user_edu_status]
+			return HttpResponse(json.dumps(dict(zip(keys, values)), cls=DjangoJSONEncoder))
+		else:
+			return HttpResponse("deactive")
+	except User.DoesNotExist:
+		return HttpResponse("invalid")
+
 def get_user_history(request, user_id, page):
 	history_list = UserHistory.objects.filter(owner__id = int(user_id)).values('id', 'created', 'action', 'content').order_by('-created')
 	page = int(page)

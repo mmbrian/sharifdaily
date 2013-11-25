@@ -13,4 +13,5 @@ urlpatterns = patterns('sharifdaily.accounts.views',
 	url(r'^change_picture$', 'change_picture'),
 	url(r'^history/post$', 'post_user_history'),
 	url(r'^history/(?P<user_id>[0-9]+)/(?P<page>[0-9]+)/$', 'get_user_history'),
+	url(r'^profile/(?P<user_id>[0-9]+)/$', 'get_user_profile'),
 )

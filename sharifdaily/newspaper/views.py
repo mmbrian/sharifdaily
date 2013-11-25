@@ -55,7 +55,7 @@ def get_reports(request, page):
 
 def get_article_comments(request, page, _id):
 	try:
-		comment_list = ArticleComment.objects.filter(article__id=int(_id), is_public=True).values('created', 'tag', 'content').order_by('-created')	
+		comment_list = ArticleComment.objects.filter(article__id=int(_id), is_public=True).values('created', 'tag', 'content', 'author').order_by('-created')	
 		page_num = int(page)
 		start = (page_num - 1) * COMMENTS_PER_PAGE
 		end = page_num * COMMENTS_PER_PAGE
@@ -65,7 +65,7 @@ def get_article_comments(request, page, _id):
 
 def get_report_comments(request, page, _id):
 	try:
-		comment_list = ReportComment.objects.filter(report__id=int(_id), is_public=True).values('created', 'tag', 'content').order_by('-created')	
+		comment_list = ReportComment.objects.filter(report__id=int(_id), is_public=True).values('created', 'tag', 'content', 'author').order_by('-created')	
 		page_num = int(page)
 		start = (page_num - 1) * COMMENTS_PER_PAGE
 		end = page_num * COMMENTS_PER_PAGE

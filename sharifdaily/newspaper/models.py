@@ -77,3 +77,14 @@ class Like(models.Model):
 	user = models.ForeignKey(User, related_name="likes")
 	article = models.ForeignKey(Article, related_name="likes", blank=True, null=True)
 	report = models.ForeignKey(Report, related_name="likes", blank=True, null=True)
+
+class Ad(models.Model):
+	date = models.DateTimeField(auto_now_add=True)
+	name = models.CharField(max_length=144)
+	link = models.CharField(max_length=300)
+	image = models.ImageField(upload_to='ad_photos/')
+	published = models.BooleanField(default=False)
+	tag = models.CharField(max_length=144, blank=True)
+
+	def __unicode__(self):
+		return unicode(self.name)

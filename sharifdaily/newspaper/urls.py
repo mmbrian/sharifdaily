@@ -2,6 +2,8 @@ from django.conf.urls import patterns, include, url
 
 urlpatterns = patterns('sharifdaily.newspaper.views',
 	# url(r'^login/(?P<uname>.*)/(?P<pwd>.*)', 'login')
+	url(r'^ads/$', 'get_ads'),
+
 	url(r'^articles/page/(?P<page>[0-9]+)/$', 'get_articles'),
 	url(r'^archives/page/(?P<page>[0-9]+)/$', 'get_main_archives'),
 	url(r'^archives/other/page/(?P<page>[0-9]+)/$', 'get_other_archives'),

@@ -62,7 +62,9 @@ def get_user_profile(request, user_id):
 	try:
 		user = User.objects.get(id=int(user_id))
 		if user.is_active:
+			user_username      = user.username
 			user_full_name     = user.get_full_name()
+			user_email         = user.email
 			user_major         = ''
 			user_avatar        = ''
 			user_national_code = ''
@@ -79,8 +81,8 @@ def get_user_profile(request, user_id):
 			except Profile.DoesNotExist:
 				pass
 
-			keys = ["full_name", "major", "avatar_url", "national_code", "phone_number", "edu_status"]
-			values = [user_full_name, user_major, user_avatar, user_national_code, user_phone_number, user_edu_status]
+			keys = ["full_name", "username", "email", "major", "avatar_url", "national_code", "phone_number", "edu_status"]
+			values = [user_full_name, user_username, user_email, user_major, user_avatar, user_national_code, user_phone_number, user_edu_status]
 			return HttpResponse(json.dumps(dict(zip(keys, values)), cls=DjangoJSONEncoder))
 		else:
 			return HttpResponse("deactive")

@@ -78,7 +78,7 @@ class Like(models.Model):
 	article = models.ForeignKey(Article, related_name="likes", blank=True, null=True)
 	report = models.ForeignKey(Report, related_name="likes", blank=True, null=True)
 
-class Ad(models.Model):
+class Advertisement(models.Model):
 	date = models.DateTimeField(auto_now_add=True)
 	name = models.CharField(max_length=144)
 	link = models.CharField(max_length=300)

@@ -20,7 +20,7 @@ REPORTS_PER_PAGE = 50
 COMMENTS_PER_PAGE = 50
 
 def get_ads(request):
-	ad_list = Ad.objects.filter(published = True).values('id', 'link', 'image', 'name').order_by('-date')
+	ad_list = Advertisement.objects.filter(published = True).values('id', 'link', 'image', 'name').order_by('-date')
 	return HttpResponse(json.dumps(list(ad_list), cls=DjangoJSONEncoder))
 
 def get_articles(request, page):

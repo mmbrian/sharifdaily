@@ -145,6 +145,7 @@ DJANGO_APPS = (
 THIRT_PARTY_APPS = (
     "south",
     'imagekit',
+    'constance',
     # 'filer',
     # 'mptt',
     # 'easy_thumbnails',
@@ -157,6 +158,24 @@ LOCAL_APPS = (
 )
 
 INSTALLED_APPS = DJANGO_APPS + THIRT_PARTY_APPS + LOCAL_APPS
+
+#@ThirdParty
+#Constance Settings
+CONSTANCE_CONFIG = {
+    'ENABLE_COMMENT_MODERATION': (False, 'Moderate Comments?'),
+    'ENABLE_REPORT_MODERATION': (False, 'Moderate Reports?'),
+}
+
+CONSTANCE_BACKEND = 'constance.backends.redisd.RedisBackend'
+
+CONSTANCE_REDIS_CONNECTION = {
+    'host': 'localhost',
+    'port': 6379,
+    'db': 0,
+}
+
+CONSTANCE_REDIS_PREFIX = 'constance:sharifdaily:'
+##
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
 

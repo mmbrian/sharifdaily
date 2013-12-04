@@ -5,6 +5,8 @@ from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q
 
+from constance import config
+
 from .models import *
 from sharifdaily.accounts.views import REAL_SECRET_KEY
 from sharifdaily.accounts.utils import diff
@@ -19,10 +21,18 @@ ARCHIVES_PER_PAGE = 50
 REPORTS_PER_PAGE = 50
 COMMENTS_PER_PAGE = 50
 
+def test(request):
+	return HttpResponse(str(config.ENABLE_REPORT_MODERATION))
+
 def get_ads(request):
 	ad_list = Advertisement.objects.filter(published = True).values('id', 'link', 'image', 'name').order_by('-date')
 	return HttpResponse(json.dumps(list(ad_list), cls=DjangoJSONEncoder))
 
+def get_last_article_id(request):
+	try:
+		return HttpResponse(str(Article.objects.latest('id').id))
+	except Article.DoesNotExist:
+		return HttpResponse('-1')
 def get_articles(request, page):
 	article_list = Article.objects.filter(published = True).values('id', 'date', 'headline', 'content', 'view_count', 'photo').order_by('-date')
 	page = int(page)

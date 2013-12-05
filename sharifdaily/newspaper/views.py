@@ -21,9 +21,6 @@ ARCHIVES_PER_PAGE = 50
 REPORTS_PER_PAGE = 50
 COMMENTS_PER_PAGE = 50
 
-def test(request):
-	return HttpResponse(str(config.ENABLE_REPORT_MODERATION))
-
 def get_ads(request):
 	ad_list = Advertisement.objects.filter(published = True).values('id', 'link', 'image', 'name').order_by('-date')
 	return HttpResponse(json.dumps(list(ad_list), cls=DjangoJSONEncoder))
@@ -59,7 +56,11 @@ def get_archives(request, page, is_main):
 	return HttpResponse(json.dumps(list(archive_list[start:end]), cls=DjangoJSONEncoder))
 
 
-
+def get_last_report_id(request):
+	try:
+		return HttpResponse(str(Report.objects.latest('id').id))
+	except Report.DoesNotExist:
+		return HttpResponse('-1')
 def get_reports(request, page):
 	report_list = Report.objects.filter(published = True).values('id', 'date', 'headline', 'view_count', 'author', 'tag', 'content', 'photo', 'audio', 'video').order_by('-date')
 	page = int(page)
@@ -132,7 +133,7 @@ def post_article_comment(request):
 				article = Article.objects.get(id=article_id)
 				comment = ArticleComment(author=user, article=article, content=content)
 				comment.tag = user.get_full_name()
-				comment.is_public = True # Comment for moderation
+				comment.is_public = not config.ENABLE_COMMENT_MODERATION
 				comment.save()
 				return HttpResponse(str(comment.id))
 			except User.DoesNotExist:
@@ -157,7 +158,7 @@ def post_report_comment(request):
 				report = Report.objects.get(id=report_id)
 				comment = ReportComment(author=user, report=report, content=content)
 				comment.tag = user.get_full_name()
-				comment.is_public = True # Comment for moderation
+				comment.is_public = not config.ENABLE_COMMENT_MODERATION
 				comment.save()
 				return HttpResponse(str(comment.id))
 			except User.DoesNotExist:
@@ -310,7 +311,7 @@ def post_report(request):
 				audio = request.FILES.get('audio', None)
 
 				report = Report(author=user, headline=report_title)
-				report.published = True # Comment for moderation
+				report.published = not config.ENABLE_REPORT_MODERATION
 				report.content = report_content
 				report.photo = image
 				report.video = video

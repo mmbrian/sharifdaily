@@ -106,6 +106,7 @@ TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
 #     'django.template.loaders.eggs.Loader',
+    'sharifdaily.thirdparty.apptemplates.Loader',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -146,6 +147,7 @@ THIRT_PARTY_APPS = (
     "south",
     'imagekit',
     'constance',
+    'sharifdaily.thirdparty.apptemplates',
     # 'filer',
     # 'mptt',
     # 'easy_thumbnails',

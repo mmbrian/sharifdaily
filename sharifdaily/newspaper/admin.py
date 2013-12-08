@@ -2,6 +2,11 @@ from django.contrib import admin
 from .models import Report, Article, ArticleComment, ReportComment, Archive, Advertisement
 
 class PostAdmin(admin.ModelAdmin):
+    list_display = ('headline', 'published', 'view_count', 'like_count', 'date')
+    def like_count(self, obj):
+        return unicode(obj.likes.count())
+    like_count.short_description = 'Like count'
+
     readonly_fields = ('view_count', 'date')
     exclude = ('tag',)
     actions = ['make_public']
@@ -15,8 +20,13 @@ class PostAdmin(admin.ModelAdmin):
         self.message_user(request, "%s successfully marked as published." % message_bit)
     make_public.short_description = "Make selected items as published"
 
+class ReportAdmin(PostAdmin):
+    list_display = ('headline', 'read', 'published', 'view_count', 'like_count', 'date')
+
 
 class CommentAdmin(admin.ModelAdmin):
+    list_display = ('__unicode__', 'read', 'is_public', 'created')
+
     readonly_fields = ('author', 'created')
     exclude = ('tag',)
     actions = ['make_public']
@@ -37,7 +47,7 @@ class ArchiveAdmin(admin.ModelAdmin):
 class AdvertisementAdmin(admin.ModelAdmin):
     exclude = ('tag',)
 
-admin.site.register(Report, PostAdmin)
+admin.site.register(Report, ReportAdmin)
 admin.site.register(Article, PostAdmin)
 admin.site.register(ArticleComment, CommentAdmin)
 admin.site.register(ReportComment, CommentAdmin)

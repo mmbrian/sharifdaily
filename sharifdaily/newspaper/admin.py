@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import Report, Article, ArticleComment, ReportComment, Archive, Advertisement
 
 class PostAdmin(admin.ModelAdmin):
-    readonly_fields = ('view_count',)
+    readonly_fields = ('view_count', 'date')
     exclude = ('tag',)
     actions = ['make_public']
 
@@ -17,8 +17,7 @@ class PostAdmin(admin.ModelAdmin):
 
 
 class CommentAdmin(admin.ModelAdmin):
-    # readonly_fields = ('author', 'created')
-    readonly_fields = ('created',)
+    readonly_fields = ('author', 'created')
     exclude = ('tag',)
     actions = ['make_public']
 

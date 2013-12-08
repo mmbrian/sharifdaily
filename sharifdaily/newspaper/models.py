@@ -37,6 +37,7 @@ class Report(models.Model):
 	content = models.TextField(blank=True)
 	view_count = models.IntegerField(blank=True, null=True, default=0)
 	published = models.BooleanField(default=False)
+	read = models.BooleanField(default=False)
 	tag = models.CharField(max_length=144, blank=True) # for now I just use it to store an author's name
 
 	photo = ProcessedImageField(upload_to='report_photos/',
@@ -57,6 +58,7 @@ class ArticleComment(models.Model):
 	content = models.TextField()
 	article = models.ForeignKey(Article, related_name="comments")
 	is_public = models.BooleanField(default=False)
+	read = models.BooleanField(default=False)
 	tag = models.CharField(max_length=144, blank=True) # for now I just use it to store an author's name
 
 	def __unicode__(self):
@@ -68,6 +70,7 @@ class ReportComment(models.Model):
 	content = models.TextField()
 	report = models.ForeignKey(Report, related_name="comments")
 	is_public = models.BooleanField(default=False)
+	read = models.BooleanField(default=False)
 	tag = models.CharField(max_length=144, blank=True) # for now I just use it to store an author's name
 
 	def __unicode__(self):

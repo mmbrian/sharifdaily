@@ -21,7 +21,7 @@ class Article(models.Model):
 	published = models.BooleanField(default=False)
 	tag = models.CharField(max_length=144, blank=True) # for storing arbitrary data
 
-	photo = models.ImageField(upload_to='article_photos/', blank=True)
+	photo = models.ImageField(upload_to='article_photos/')
 	photo_thumbnail = ImageSpecField(source='photo',
                                       processors=[ResizeToFill(200, 150)],
                                       format='JPEG',

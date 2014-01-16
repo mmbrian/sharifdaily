@@ -16,7 +16,7 @@ try:
 except ImportError:
    from django.utils import simplejson as json
 
-ARTICLES_PER_PAGE = 50
+ARTICLES_PER_PAGE = 10
 ARCHIVES_PER_PAGE = 50
 REPORTS_PER_PAGE = 50
 COMMENTS_PER_PAGE = 50

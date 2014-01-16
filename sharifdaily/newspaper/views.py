@@ -17,9 +17,9 @@ except ImportError:
    from django.utils import simplejson as json
 
 ARTICLES_PER_PAGE = 10
-ARCHIVES_PER_PAGE = 50
-REPORTS_PER_PAGE = 50
-COMMENTS_PER_PAGE = 50
+ARCHIVES_PER_PAGE = 10
+REPORTS_PER_PAGE = 10
+COMMENTS_PER_PAGE = 10
 
 def get_ads(request):
 	ad_list = Advertisement.objects.filter(published = True).values('id', 'link', 'image', 'name').order_by('-date')

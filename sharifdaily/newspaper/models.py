@@ -62,7 +62,7 @@ class Podcast(models.Model):
 	published = models.BooleanField(default=False)
 
 	def __unicode__(self):
-		return unicode("%s: %s" % (self.headline, self.content[:60]))
+		return unicode("%s: %s" % (self.title, self.content[:60]))
 
 class ArticleComment(models.Model):
 	created = models.DateTimeField(auto_now_add=True)

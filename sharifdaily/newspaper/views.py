@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
-from django.db.models import Q
+from django.db.models import Q, Count
 
 from constance import config
 
@@ -19,23 +19,46 @@ except ImportError:
 ARTICLES_PER_PAGE = 10
 ARCHIVES_PER_PAGE = 10
 REPORTS_PER_PAGE = 10
+PODCASTS_PER_PAGE = 10
 COMMENTS_PER_PAGE = 10
 
+# Ad views ###################################################################################################################################
 def get_ads(request):
 	ad_list = Advertisement.objects.filter(published = True).values('id', 'link', 'image', 'name').order_by('-date')
 	return HttpResponse(json.dumps(list(ad_list), cls=DjangoJSONEncoder))
-
-def get_last_article_id(request):
+# End of Ad views ############################################################################################################################
+# Archive views ##############################################################################################################################
+def get_main_archives(request, page):
+	return get_archives(request, page, True)
+def get_other_archives(request, page):
+	return get_archives(request, page, False)
+def get_archives(request, page, is_main):
+	archive_list = Archive.objects.filter(Q(tag='') if is_main else ~Q(tag='')).values('id', 'tag', 'date', 'title', 'pdf').order_by('-date')
+	return __get_page(archive_list, int(page), ARCHIVES_PER_PAGE)
+# End of Archive views #######################################################################################################################
+# Article views ##############################################################################################################################
+def get_last_article_id(request, page):
 	try:
-		return HttpResponse(str(Article.objects.latest('id').id))
+		article = Article.objects.filter(published = True).order_by('-date')[(int(page)-1) * ARTICLES_PER_PAGE]
+		return HttpResponse(str(article.id))
 	except Article.DoesNotExist:
 		return HttpResponse('-1')
 def get_articles(request, page):
-	article_list = Article.objects.filter(published = True).values('id', 'date', 'headline', 'content', 'view_count', 'photo').order_by('-date')
-	page = int(page)
-	start = (page - 1) * ARTICLES_PER_PAGE
-	end = page * ARTICLES_PER_PAGE
-	return HttpResponse(json.dumps(list(article_list[start:end]), cls=DjangoJSONEncoder))
+	article_list = Article.objects.filter(published = True) \
+									.values('id', 'date', 'headline', 'content', 'view_count', 'photo') \
+									.order_by('-date')
+	return __get_page(article_list, int(page), ARTICLES_PER_PAGE)
+def get_most_viewed_articles(request, page):
+	article_list = Article.objects.filter(published = True) \
+									.values('id', 'date', 'headline', 'content', 'view_count', 'photo') \
+									.order_by('-view_count')
+	return __get_page(article_list, int(page), ARTICLES_PER_PAGE)
+def get_most_liked_articles(request, page):
+	article_list = Article.objects.filter(published = True)\
+									.values('id', 'date', 'headline', 'content', 'view_count', 'photo') \
+									.annotate(like_count=Count('likes')) \
+									.order_by('-like_count')
+	return __get_page(article_list, int(page), ARTICLES_PER_PAGE)
 
 def get_article_photo_thumbnail(request, _id):
 	try:
@@ -44,49 +67,57 @@ def get_article_photo_thumbnail(request, _id):
 	except Article.DoesNotExist:
 		return HttpResponse('invalid')
 
-def get_main_archives(request, page):
-	return get_archives(request, page, True)
-def get_other_archives(request, page):
-	return get_archives(request, page, False)
-def get_archives(request, page, is_main):
-	archive_list = Archive.objects.filter(Q(tag='') if is_main else ~Q(tag='')).values('id', 'tag', 'date', 'title', 'pdf').order_by('-date')
-	page = int(page)
-	start = (page - 1) * ARCHIVES_PER_PAGE
-	end = page * ARCHIVES_PER_PAGE
-	return HttpResponse(json.dumps(list(archive_list[start:end]), cls=DjangoJSONEncoder))
-
-
-def get_last_report_id(request):
-	try:
-		return HttpResponse(str(Report.objects.latest('id').id))
-	except Report.DoesNotExist:
-		return HttpResponse('-1')
-def get_reports(request, page):
-	report_list = Report.objects.filter(published = True).values('id', 'date', 'headline', 'view_count', 'author', 'tag', 'content', 'photo', 'audio', 'video').order_by('-date')
-	page = int(page)
-	start = (page - 1) * REPORTS_PER_PAGE
-	end = page * REPORTS_PER_PAGE
-	return HttpResponse(json.dumps(list(report_list[start:end]), cls=DjangoJSONEncoder))	
-
 def get_article_comments(request, page, _id):
 	try:
 		comment_list = ArticleComment.objects.filter(article__id=int(_id), is_public=True).values('created', 'tag', 'content', 'author').order_by('-created')	
-		page_num = int(page)
-		start = (page_num - 1) * COMMENTS_PER_PAGE
-		end = page_num * COMMENTS_PER_PAGE
-		return HttpResponse(json.dumps(list(comment_list[start:end]), cls=DjangoJSONEncoder))	
+		return __get_page(comment_list, int(page), COMMENTS_PER_PAGE)
 	except Article.DoesNotExist:
-		return HttpResponse('invalid article')		
+		return HttpResponse('invalid article')
+# End of Article views #######################################################################################################################
+# Report views ###############################################################################################################################
+def get_last_report_id(request, page):
+	try:
+		report = Report.objects.filter(published = True).order_by('-date')[(int(page)-1) * REPORTS_PER_PAGE]
+		return HttpResponse(str(report.id))
+	except Report.DoesNotExist:
+		return HttpResponse('-1')
+
+def get_reports(request, page):
+	report_list = Report.objects.filter(published = True) \
+									.values('id', 'date', 'headline', 'view_count', 'author', 'tag', 'content', 'photo', 'audio', 'video') \
+									.order_by('-date')
+	return __get_page(report_list, int(page), REPORTS_PER_PAGE)
+def get_most_viewed_reports(request, page):
+	report_list = Report.objects.filter(published = True) \
+									.values('id', 'date', 'headline', 'view_count', 'author', 'tag', 'content', 'photo', 'audio', 'video') \
+									.order_by('-view_count')
+	return __get_page(report_list, int(page), REPORTS_PER_PAGE)
+def get_most_liked_reports(request, page):
+	report_list = Report.objects.filter(published = True)\
+									.values('id', 'date', 'headline', 'view_count', 'author', 'tag', 'content', 'photo', 'audio', 'video') \
+									.annotate(like_count=Count('likes')) \
+									.order_by('-like_count')
+	return __get_page(report_list, int(page), REPORTS_PER_PAGE)
+
 
 def get_report_comments(request, page, _id):
 	try:
 		comment_list = ReportComment.objects.filter(report__id=int(_id), is_public=True).values('created', 'tag', 'content', 'author').order_by('-created')	
-		page_num = int(page)
-		start = (page_num - 1) * COMMENTS_PER_PAGE
-		end = page_num * COMMENTS_PER_PAGE
-		return HttpResponse(json.dumps(list(comment_list[start:end]), cls=DjangoJSONEncoder))	
+		return __get_page(comment_list, int(page), COMMENTS_PER_PAGE)
 	except Report.DoesNotExist:
-		return HttpResponse('invalid report')	
+		return HttpResponse('invalid report')
+# End of Report views ########################################################################################################################
+
+def get_podcasts(request, page):
+	podcast_list = Podcast.objects.filter(published = True) \
+									.values('id', 'date', 'title', 'content', 'audio') \
+									.order_by('-date')
+	return __get_page(podcast_list, int(page), PODCASTS_PER_PAGE)
+
+def __get_page(item_list, page, items_per_page):
+	start = (page - 1) * items_per_page
+	end = page * items_per_page
+	return HttpResponse(json.dumps(list(item_list[start:end]), cls=DjangoJSONEncoder))
 
 def get_article_likes(request, _id):
 	return get_likes(Article, int(_id))

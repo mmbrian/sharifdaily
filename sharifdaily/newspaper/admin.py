@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Report, Article, ArticleComment, ReportComment, Archive, Advertisement
+from .models import Report, Article, ArticleComment, ReportComment, Archive, Advertisement, Podcast
 
 class PostAdmin(admin.ModelAdmin):
     list_display = ('headline', 'published', 'view_count', 'like_count', 'date')
@@ -47,9 +47,13 @@ class ArchiveAdmin(admin.ModelAdmin):
 class AdvertisementAdmin(admin.ModelAdmin):
     exclude = ('tag',)
 
+class PodcastAdmin(admin.ModelAdmin):
+    readonly_fields = ('date',)
+
 admin.site.register(Report, ReportAdmin)
 admin.site.register(Article, PostAdmin)
 admin.site.register(ArticleComment, CommentAdmin)
 admin.site.register(ReportComment, CommentAdmin)
 admin.site.register(Archive, ArchiveAdmin)
 admin.site.register(Advertisement, AdvertisementAdmin)
+admin.site.register(Podcast, PodcastAdmin)

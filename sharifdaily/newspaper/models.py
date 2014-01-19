@@ -19,6 +19,7 @@ class Article(models.Model):
 	content = models.TextField()
 	view_count = models.IntegerField(blank=True, null=True, default=0)
 	published = models.BooleanField(default=False)
+	clear_from_client_cache = models.BooleanField(default=False) # enable on article modification
 	tag = models.CharField(max_length=144, blank=True) # for storing arbitrary data
 
 	photo = models.ImageField(upload_to='article_photos/', blank=False)
@@ -37,6 +38,7 @@ class Report(models.Model):
 	content = models.TextField(blank=True)
 	view_count = models.IntegerField(blank=True, null=True, default=0)
 	published = models.BooleanField(default=False)
+	clear_from_client_cache = models.BooleanField(default=False) # enable on report modification
 	read = models.BooleanField(default=False)
 	tag = models.CharField(max_length=144, blank=True) # for now I just use it to store an author's name
 
@@ -51,6 +53,16 @@ class Report(models.Model):
 	def __unicode__(self):
 		return unicode("%s: %s" % (self.headline[:30], self.content[:60]))
 
+
+class Podcast(models.Model):
+	date = models.DateTimeField(auto_now_add=True)
+	title = models.CharField(max_length=144)
+	audio = models.FileField(upload_to='podcasts/', max_length=200, blank=False)
+	content = models.TextField(blank=True)
+	published = models.BooleanField(default=False)
+
+	def __unicode__(self):
+		return unicode("%s: %s" % (self.headline, self.content[:60]))
 
 class ArticleComment(models.Model):
 	created = models.DateTimeField(auto_now_add=True)
